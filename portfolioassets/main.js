@@ -16,7 +16,7 @@ class PerformanceMonitor {
       const loadTimeElement = document.getElementById("load-time");
       if (loadTimeElement) {
         loadTimeElement.textContent = `Page loaded in ${Math.round(
-          this.loadTime
+          this.loadTime,
         )}ms`;
       }
 
@@ -33,7 +33,7 @@ class PerformanceMonitor {
       this.trackEvent(
         "performance",
         "lcp",
-        Math.round(lastEntry.renderTime || lastEntry.loadTime)
+        Math.round(lastEntry.renderTime || lastEntry.loadTime),
       );
     });
 
@@ -50,7 +50,7 @@ class PerformanceMonitor {
         this.trackEvent(
           "performance",
           "fid",
-          Math.round(entry.processingStart - entry.startTime)
+          Math.round(entry.processingStart - entry.startTime),
         );
       });
     });
@@ -86,7 +86,7 @@ class ErrorBoundary {
     window.addEventListener("error", this.handleError.bind(this));
     window.addEventListener(
       "unhandledrejection",
-      this.handlePromiseRejection.bind(this)
+      this.handlePromiseRejection.bind(this),
     );
   }
 
@@ -117,9 +117,7 @@ class ErrorBoundary {
     }
 
     // Log to console for development
-    if (process.env.NODE_ENV === "development") {
-      console.error("Error captured:", errorInfo);
-    }
+    console.error("Error captured:", errorInfo);
   }
 }
 
@@ -214,7 +212,7 @@ class LazyLoadingManager {
         {
           rootMargin: "50px 0px",
           threshold: 0.1,
-        }
+        },
       );
     }
   }
@@ -324,16 +322,21 @@ class ModalManager {
     });
 
     // Close modal
-    document.querySelector(".modal-close").addEventListener("click", () => {
-      this.closeModal();
-    });
+    const closeBtn = document.querySelector(".modal-close");
+    if (closeBtn) {
+      closeBtn.addEventListener("click", () => {
+        this.closeModal();
+      });
+    }
 
     // Close on backdrop click
-    this.modal.addEventListener("click", (e) => {
-      if (e.target === this.modal) {
-        this.closeModal();
-      }
-    });
+    if (this.modal) {
+      this.modal.addEventListener("click", (e) => {
+        if (e.target === this.modal) {
+          this.closeModal();
+        }
+      });
+    }
 
     // Close on escape key
     document.addEventListener("keydown", (e) => {
@@ -350,7 +353,12 @@ class ModalManager {
       this.getProjectTitle(projectId);
 
     this.modal.classList.add("active");
+    this.modal.setAttribute("aria-hidden", "false");
     document.body.style.overflow = "hidden";
+
+    // Focus the close button for accessibility
+    const closeBtn = this.modal.querySelector(".modal-close");
+    if (closeBtn) setTimeout(() => closeBtn.focus(), 100);
 
     // Track modal view
     window.portfolioApp
@@ -360,81 +368,44 @@ class ModalManager {
 
   closeModal() {
     this.modal.classList.remove("active");
+    this.modal.setAttribute("aria-hidden", "true");
     document.body.style.overflow = "";
   }
 
   getModalContent(projectId) {
     const content = {
-      "elite-dental": `
-        <div class="modal-project-info">
-          <h4>Project Overview</h4>
-          <p>A modern dental clinic website built with pure HTML5, CSS3, and JavaScript ES6+.</p>
-          
-          <h4>Key Features</h4>
-          <ul>
-            <li>Fully responsive design</li>
-            <li>Service showcase with animations</li>
-            <li>Contact form with validation</li>
-            <li>Optimized for performance</li>
-          </ul>
-          
-          <h4>Technologies Used</h4>
-          <div class="tech-tags">
-            <span class="tech-tag">HTML5</span>
-            <span class="tech-tag">CSS3</span>
-            <span class="tech-tag">JavaScript</span>
-            <span class="tech-tag">Responsive Design</span>
+      "my-portfolio": `
+         <div class="modal-project-info">
+          <div class="modal-section">
+            <h4>Overview</h4>
+            <p>This personal portfolio showcases my skills, projects, and experience using modern web technologies. Built from scratch with a focus on performance, accessibility, and a polished user experience.</p>
           </div>
-        </div>
-      `,
-      portfolio: `
-        <div class="modal-project-info">
-          <h4>Project Overview</h4>
-          <p>A personal portfolio website showcasing skills, projects, and experience with modern web technologies.</p>
-          
-          <h4>Key Features</h4>
-          <ul>
-            <li>Dark/Light mode toggle</li>
-            <li>Smooth animations and transitions</li>
-            <li>Responsive design</li>
-            <li>Contact form with validation</li>
-            <li>Performance optimized</li>
-          </ul>
-          
-          <h4>Technologies Used</h4>
-          <div class="tech-tags">
-            <span class="tech-tag">HTML5</span>
-            <span class="tech-tag">CSS3</span>
-            <span class="tech-tag">JavaScript ES6+</span>
-            <span class="tech-tag">ScrollReveal</span>
-            <span class="tech-tag">Typed.js</span>
+          <hr class="modal-divider" />
+          <div class="modal-section">
+            <h4>Key Features</h4>
+            <ul>
+              <li>Dark / light mode with system preference detection</li>
+              <li>Smooth scroll-reveal animations and typed text effect</li>
+              <li>Fully responsive across mobile, tablet, and desktop</li>
+              <li>PWA-ready with service worker and web manifest</li>
+              <li>Accessible — semantic HTML, ARIA roles, keyboard nav</li>
+            </ul>
           </div>
-        </div>
-      `,
-      "face-attendance": `
-        <div class="modal-project-info">
-          <h4>Project Overview</h4>
-          <p>A real-time face recognition-based attendance system using computer vision and web technologies.</p>
-          
-          <h4>Key Features</h4>
-          <ul>
-            <li>Real-time face detection and recognition</li>
-            <li>Automated attendance logging</li>
-            <li>Secure authentication system</li>
-            <li>Web-based admin interface</li>
-            <li>MySQL database integration</li>
-          </ul>
-          
-          <h4>Technologies Used</h4>
-          <div class="tech-tags">
-            <span class="tech-tag">Python</span>
-            <span class="tech-tag">Flask</span>
-            <span class="tech-tag">OpenCV</span>
-            <span class="tech-tag">MySQL</span>
-            <span class="tech-tag">HTML/CSS/JavaScript</span>
+          <hr class="modal-divider" />
+          <div class="modal-section">
+            <h4>Tech Stack</h4>
+            <div class="tech-tags">
+              <span class="tech-tag">HTML5</span>
+              <span class="tech-tag">CSS3</span>
+              <span class="tech-tag">JavaScript ES6+</span>
+              <span class="tech-tag">ScrollReveal</span>
+              <span class="tech-tag">Typed.js</span>
+            </div>
           </div>
-          
-          <p><strong>Status:</strong> In Development</p>
+          <hr class="modal-divider" />
+          <div class="modal-section">
+            <span class="modal-status">Live &amp; deployed</span>
+          </div>
         </div>
       `,
     };
@@ -444,9 +415,7 @@ class ModalManager {
 
   getProjectTitle(projectId) {
     const titles = {
-      "elite-dental": "Elite Dental Care",
-      portfolio: "Bhuwan Paneru Portfolio",
-      "face-attendance": "Face Attendance System",
+      "My Portfolio": "Bhuwan Paneru — Portfolio",
     };
 
     return titles[projectId] || "Project Details";
@@ -477,7 +446,7 @@ class EnhancedContactManager {
         "input",
         this.debounce(() => {
           this.clearError(input);
-        }, 300)
+        }, 300),
       );
     });
 
@@ -488,7 +457,7 @@ class EnhancedContactManager {
         e.preventDefault();
         this.showMessage(
           "Spam detection triggered. Please try again.",
-          "error"
+          "error",
         );
         return false;
       }
@@ -601,7 +570,7 @@ class EnhancedContactManager {
     if (!isValid) {
       this.showMessage(
         "Please fix the errors above before submitting.",
-        "error"
+        "error",
       );
       return;
     }
@@ -619,7 +588,7 @@ class EnhancedContactManager {
 
       this.showMessage(
         "Message sent successfully! I'll get back to you soon.",
-        "success"
+        "success",
       );
       this.form.reset();
       this.clearAllStatuses();
@@ -631,7 +600,7 @@ class EnhancedContactManager {
     } catch (error) {
       this.showMessage(
         "Failed to send message. Please try again later.",
-        "error"
+        "error",
       );
       window.portfolioApp
         .getModule("analytics")
@@ -727,7 +696,7 @@ class AccessibilityManager {
 
   handleTabNavigation(e) {
     const focusableElements = document.querySelectorAll(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
     );
 
     const firstElement = focusableElements[0];
@@ -798,7 +767,7 @@ class DownloadManager {
     const hireMeButton = document.getElementById("hireMeButton");
     if (hireMeButton) {
       hireMeButton.addEventListener("click", () => {
-        window.open("https://linkedin.com/in/imbhuwanpaneru", "_blank");
+        window.open("https://www.linkedin.com/in/bhuwan-paneru-95a3a534a", "_blank");
         window.portfolioApp
           .getModule("analytics")
           ?.trackEvent("engagement", "hire_me_click", "linkedin");
@@ -857,7 +826,6 @@ class PortfolioApp {
       scroll: ScrollManager,
       theme: ThemeManager,
       animations: AnimationManager,
-      contact: EnhancedContactManager,
       download: DownloadManager,
       analytics: AnalyticsManager,
       performance: PerformanceMonitor,
@@ -886,7 +854,7 @@ class PortfolioApp {
       () => {
         this.modules.get("scroll")?.handleScroll();
       },
-      options
+      options,
     );
 
     window.addEventListener(
@@ -894,7 +862,7 @@ class PortfolioApp {
       () => {
         this.modules.get("navigation")?.handleResize();
       },
-      options
+      options,
     );
 
     // Service Worker Registration (for PWA)
@@ -920,8 +888,9 @@ class PortfolioApp {
 // ----- MODERN NAVIGATION -----
 class NavigationManager {
   constructor() {
-    this.menuBtn = document.getElementById("myNavMenu");
+    this.navMenu = document.getElementById("myNavMenu");
     this.mobileMenuToggle = document.getElementById("mobileMenuToggle");
+    this.mobileMenuIcon = document.getElementById("mobileMenuIcon");
     this.navHeader = document.getElementById("header");
     this.init();
   }
@@ -950,7 +919,7 @@ class NavigationManager {
   }
 
   toggleMenu() {
-    if (this.menuBtn.classList.contains("responsive")) {
+    if (this.navMenu.classList.contains("responsive")) {
       this.closeMenu();
     } else {
       this.openMenu();
@@ -958,32 +927,39 @@ class NavigationManager {
   }
 
   openMenu() {
-    this.menuBtn.classList.add("responsive");
+    this.navMenu.classList.add("responsive");
     this.mobileMenuToggle.setAttribute("aria-expanded", "true");
+    if (this.mobileMenuIcon) {
+      this.mobileMenuIcon.className = "uil uil-times";
+    }
     document.body.style.overflow = "hidden";
 
     // Add event listener to close menu when clicking outside
     setTimeout(() => {
       document.addEventListener(
         "click",
-        this.closeMenuOnClickOutside.bind(this)
+        this.closeMenuOnClickOutside.bind(this),
       );
     }, 10);
   }
 
   closeMenu() {
-    this.menuBtn.classList.remove("responsive");
+    if (!this.navMenu) return;
+    this.navMenu.classList.remove("responsive");
     this.mobileMenuToggle.setAttribute("aria-expanded", "false");
+    if (this.mobileMenuIcon) {
+      this.mobileMenuIcon.className = "uil uil-bars";
+    }
     document.body.style.overflow = "";
     document.removeEventListener(
       "click",
-      this.closeMenuOnClickOutside.bind(this)
+      this.closeMenuOnClickOutside.bind(this),
     );
   }
 
   closeMenuOnClickOutside(event) {
     if (
-      !this.menuBtn.contains(event.target) &&
+      !this.navMenu.contains(event.target) &&
       !this.mobileMenuToggle.contains(event.target)
     ) {
       this.closeMenu();
@@ -1067,28 +1043,33 @@ class ScrollManager {
   }
 
   setupScrollSpy() {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            this.setActiveNavLink(entry.target.id);
-          }
-        });
-      },
-      { threshold: 0.5, rootMargin: "-20% 0px" }
-    );
+    const sections = Array.from(document.querySelectorAll("section[id]"));
+    const navHeight = (this.header?.offsetHeight || 80) + 10;
 
-    document.querySelectorAll("section[id]").forEach((section) => {
-      observer.observe(section);
-    });
+    const onScroll = () => {
+      const scrollY = window.scrollY;
+      let currentId = sections[0]?.id || "";
+
+      for (const section of sections) {
+        const sectionTop = section.offsetTop - navHeight - 40;
+        if (scrollY >= sectionTop) {
+          currentId = section.id;
+        }
+      }
+
+      this.setActiveNavLink(currentId);
+    };
+
+    // Use the same passive scroll listener registered in PortfolioApp
+    window.addEventListener("scroll", onScroll, { passive: true });
+    // Set correct active link on initial load
+    onScroll();
   }
 
   setActiveNavLink(sectionId) {
     document.querySelectorAll(".nav-link").forEach((link) => {
-      link.classList.toggle(
-        "active-link",
-        link.getAttribute("href") === `#${sectionId}`
-      );
+      const isActive = link.getAttribute("href") === `#${sectionId}`;
+      link.classList.toggle("active-link", isActive);
     });
   }
 
@@ -1113,7 +1094,7 @@ class ThemeManager {
   setInitialTheme() {
     const saved = localStorage.getItem("portfolio-theme");
     const prefersDark = window.matchMedia(
-      "(prefers-color-scheme: dark)"
+      "(prefers-color-scheme: dark)",
     ).matches;
     const isDark = saved ? saved === "dark" : prefersDark;
 
@@ -1147,37 +1128,39 @@ class ThemeManager {
   }
 
   applyThemeClasses(isDark) {
-    // Remove all theme classes first
-    document.body.classList.remove('dark-mode', 'light-mode');
-    document.documentElement.classList.remove('dark-mode', 'light-mode', 'dark-mode-preload', 'light-mode-preload');
-    
-    // Apply correct classes
+    // Remove all theme and preload classes
+    document.body.classList.remove("dark-mode", "light-mode");
+    document.documentElement.classList.remove(
+      "dark-mode",
+      "light-mode",
+      "dark-mode-preload",
+      "light-mode-preload",
+    );
+
+    // Apply correct classes to both html and body
     if (isDark) {
-      document.body.classList.add('dark-mode');
-      document.documentElement.classList.add('dark-mode');
-      document.documentElement.style.colorScheme = 'dark';
+      document.body.classList.add("dark-mode");
+      document.documentElement.classList.add("dark-mode");
+      document.documentElement.style.colorScheme = "dark";
     } else {
-      document.body.classList.add('light-mode');
-      document.documentElement.classList.add('light-mode');
-      document.documentElement.style.colorScheme = 'light';
+      document.body.classList.add("light-mode");
+      document.documentElement.classList.add("light-mode");
+      document.documentElement.style.colorScheme = "light";
     }
   }
 
   setTheme(isDark, animate = true) {
+    if (animate) {
+      document.documentElement.classList.add("theme-transitioning");
+    }
+
     // Apply theme classes
     this.applyThemeClasses(isDark);
 
     if (animate) {
-      // Add smooth transition to all elements during theme change
-      document.body.style.transition = `background-color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                                        color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                                        border-color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                                        box-shadow 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      
-      // Remove transition after animation completes
       setTimeout(() => {
-        document.body.style.transition = "";
-      }, 400);
+        document.documentElement.classList.remove("theme-transitioning");
+      }, 500);
     }
 
     this.updateIcon(isDark);
@@ -1221,7 +1204,7 @@ class AnimationManager {
         "Programmer",
         "Problem Solver",
         "Engineering Student",
-        "Full-Stack Developer",
+        "Java Developer",
       ],
       typeSpeed: 70,
       backSpeed: 40,
@@ -1242,7 +1225,7 @@ class AnimationManager {
           }
         });
       },
-      { threshold: 0.2 }
+      { threshold: 0.2 },
     );
 
     const skillsSection = document.getElementById("skills");
@@ -1279,9 +1262,12 @@ class AnimationManager {
 document.addEventListener("DOMContentLoaded", () => {
   window.portfolioApp = new PortfolioApp();
 
-  setTimeout(() => {
-    document.body.classList.add("loaded");
-  }, 100);
+  // Wait for fonts to load before showing content to prevent FOUT
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      document.body.classList.add("loaded");
+    });
+  });
 });
 
 console.log("✨ Enhanced Portfolio JS loaded");
