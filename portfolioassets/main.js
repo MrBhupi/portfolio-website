@@ -1202,7 +1202,7 @@ class AnimationManager {
     new Typed(".typedText", {
       strings: [
         "Programmer",
-        "Problem Solver",
+        "QA Engineer",
         "Engineering Student",
         "Java Developer",
       ],
