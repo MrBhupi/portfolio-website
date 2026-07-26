@@ -1203,7 +1203,8 @@ class AnimationManager {
       strings: [
         "Programmer",
         "QA Engineer",
-        "Engineering Student",
+        "Registered Computer Engineer",
+        "Cybersecurity Enthusiast",
         "Java Developer",
       ],
       typeSpeed: 70,
