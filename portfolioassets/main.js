@@ -1201,11 +1201,9 @@ class AnimationManager {
 
     new Typed(".typedText", {
       strings: [
-        "Programmer",
-        "QA Engineer",
-        "Registered Computer Engineer",
-        "Cybersecurity Enthusiast",
-        "Java Developer",
+        "Computer Engineer",
+        "Aspiring Cybersecurity Analyst",
+        "SOC Analyst",
       ],
       typeSpeed: 70,
       backSpeed: 40,

@@ -3318,6 +3318,24 @@ textarea:not(.form-textarea):focus-visible {
     margin-bottom: 0;
   }
 
+.skill-item img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+.security-logo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+
+}
+.skill-item .security-logo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  display: block;
+  flex-shrink: 0;
+}
   .featured-text {
     width: 60%;
   }
